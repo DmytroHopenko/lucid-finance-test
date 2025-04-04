@@ -1,5 +1,7 @@
 "use server";
 
+import { Variable } from "@/types";
+
 interface fetchDataResponse {
     json?: Variable[];
     error?: string;

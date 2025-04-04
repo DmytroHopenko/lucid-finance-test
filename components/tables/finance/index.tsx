@@ -1,6 +1,5 @@
 "use client";
 
-import { FormulaInput } from "@/components/forms/elements/formula-input";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -14,14 +13,22 @@ import {
 import { useVariableStore } from "@/lib/store/variable-store";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { FaTrash } from "react-icons/fa";
+import { NameField } from "./components/name-field";
+import { ValueField } from "./components/value-field";
+import { FormulaField } from "./components/formula-field";
 
 export const FinanceTable = () => {
-  const { activeVariables, openOverlay, removeActiveVariable } = useVariableStore();
+  const { activeVariables, openOverlay, removeActiveVariable } =
+    useVariableStore();
 
   return (
     <>
       <Table className="w-[700px] lg:w-full mx-auto lg:mx-0">
-        <TableCaption>{activeVariables.length > 0 ? "A list of your variables." : "No variables yet"}</TableCaption>
+        <TableCaption>
+          {activeVariables.length > 0
+            ? "A list of your variables."
+            : "No variables yet"}
+        </TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">Variable</TableHead>
@@ -30,13 +37,37 @@ export const FinanceTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {activeVariables.map(({ id, name, value }) => (
-            <TableRow key={id}>
-              <TableCell>{name}</TableCell>
-              <TableCell>{value}</TableCell>
-              <TableCell><FormulaInput /></TableCell>
-              <TableCell className="text-right"><Button onClick={() => removeActiveVariable(id)} variant="destructive"><FaTrash />
-              </Button></TableCell>
+          {activeVariables.map((variable) => (
+            <TableRow key={variable.id}>
+              <TableCell>
+                <NameField
+                  id={variable.id}
+                  tag={variable.name}
+                  variable={variable}
+                />
+              </TableCell>
+              <TableCell>
+                <ValueField
+                  id={variable.id}
+                  tagValue={variable.value}
+                  variable={variable}
+                />
+              </TableCell>
+              <TableCell>
+                <FormulaField
+                  id={variable.id}
+                  formula={variable.formula}
+                  variable={variable}
+                />
+              </TableCell>
+              <TableCell className="text-right">
+                <Button
+                  onClick={() => removeActiveVariable(variable.id)}
+                  variant="destructive"
+                >
+                  <FaTrash />
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
           <TableRow>

@@ -1,5 +1,6 @@
 "use client";
 
+import { Loader } from "@/components/globals/loader";
 import { VariableOverlay } from "@/components/overlays/variable";
 import { FinanceTable } from "@/components/tables/finance";
 import { fetchData } from "@/lib/actions/table";
@@ -32,14 +33,14 @@ const Home = () => {
       </div>
       <div className="w-full overflow-auto">
         {isPending ? (
-          <>Loading</>
+          <Loader />
         ) : error ? (
           <p>{error.message}</p>
         ) : (
           <FinanceTable />
         )}
       </div>
-            <VariableOverlay />
+      <VariableOverlay />
     </section>
   );
 };

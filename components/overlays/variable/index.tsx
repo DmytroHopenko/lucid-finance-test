@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Dialog,
   DialogContent,
@@ -5,9 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { useVariableStore } from "@/lib/store/variable-store";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
   Select,
@@ -18,13 +19,24 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { IoIosAddCircleOutline } from "react-icons/io";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { variableSchema } from "@/lib/validations";
+import { Form } from "@/components/ui/form";
+import { InputField } from "@/components/forms/elements/input-field";
 
 export const VariableOverlay = () => {
+  const form = useForm<z.infer<typeof variableSchema>>({
+    resolver: zodResolver(variableSchema),
+    defaultValues: {
+      name: "",
+      value: "",
+    },
+  });
   const { open, closeOverlay, variables, addActiveVariable } =
     useVariableStore();
   const memoizedVariables = useMemo(() => variables, [variables]);
-  const [newVariableName, setNewVariableName] = useState<string>("");
-  const [newVariableValue, setNewVariableValue] = useState<string>("");
 
   const handleSelectVariable = useCallback(
     (id: string) => {
@@ -37,19 +49,20 @@ export const VariableOverlay = () => {
     [variables, addActiveVariable, closeOverlay]
   );
 
-  const handleCreateNewVariable = useCallback(() => {
+  const onSubmit = (values: z.infer<typeof variableSchema>) => {
     const newVariable = {
       id: uuidv4(),
-      name: newVariableName || "New variable",
+      name: values.name || "New variable",
       category: "",
-      value: newVariableValue || undefined,
-      isEditing: false,
+      value: values.value || "",
       formula: "",
     };
+
     addActiveVariable(newVariable);
-    setNewVariableName(""); 
-    setNewVariableValue("");
-  }, [newVariableName, newVariableValue, addActiveVariable]);
+
+    form.reset();
+    closeOverlay();
+  };
 
   return (
     <Dialog open={open} onOpenChange={closeOverlay}>
@@ -78,21 +91,23 @@ export const VariableOverlay = () => {
           </Select>
         </div>
         <h2 className="text-lg font-bold">Add new variable</h2>
-        <div className="flex gap-3">
-          <Input
-            placeholder="Variable tag"
-            value={newVariableName}
-            onChange={(e) => setNewVariableName(e.target.value)}
-          />
-          <Input
-            placeholder="Variable value"
-            value={newVariableValue}
-            onChange={(e) => setNewVariableValue(e.target.value)}
-          />
-          <Button onClick={handleCreateNewVariable} variant="link">
-            <IoIosAddCircleOutline className="size-6 text-lucid-main" />
-          </Button>
-        </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-3 items-center">
+            <InputField
+              form={form}
+              placeholder="Tag Name"
+              name="name"
+            />
+            <InputField
+              form={form}
+              placeholder="Tag Value"
+              name="value"
+            />
+            <Button variant="link" type="submit">
+              <IoIosAddCircleOutline className="size-6 text-lucid-main" />
+            </Button>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

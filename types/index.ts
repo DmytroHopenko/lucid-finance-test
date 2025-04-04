@@ -1,11 +1,10 @@
-type Variable = {
+export type Variable = {
     name: string;
     category?: string;
-    value?: string;
+    value: string;
     id: string;
 }
 
-type EditableVariable = Variable & {
-    isEditing: boolean;
+export type EditableVariable = Variable & {
     formula: string;
   };

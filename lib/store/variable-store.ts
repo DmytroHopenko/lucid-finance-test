@@ -1,3 +1,4 @@
+import { EditableVariable, Variable } from "@/types";
 import { create } from "zustand";
 
 interface OverlayState {
@@ -26,7 +27,7 @@ export const useVariableStore = create<OverlayState>((set) => ({
       );
       const updatedActiveVariables = [
         ...state.activeVariables,
-        { ...variable, isEditing: false, formula: "" },
+        { ...variable, formula: "" },
       ];
       return {
         activeVariables: updatedActiveVariables,
@@ -36,7 +37,7 @@ export const useVariableStore = create<OverlayState>((set) => ({
   updateActiveVariable: (id, updatedVariable) =>
     set((state) => ({
       activeVariables: state.activeVariables.map((v) =>
-        v.id === id ? { ...v, ...updatedVariable } : v
+        v.id === id ? { ...updatedVariable } : v
       ),
     })),
   removeActiveVariable: (id) =>
