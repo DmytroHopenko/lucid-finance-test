@@ -17,6 +17,8 @@ interface FormulaFieldProps {
   variable: Omit<EditableVariable, "value" | "formula">;
 }
 
+// TODO: Implement finally formula field
+
 export const FormulaField = ({ id, formula, variable }: FormulaFieldProps) => {
   const form = useForm<z.infer<typeof formulaFieldSchema>>({
     resolver: zodResolver(formulaFieldSchema),
